@@ -1,9 +1,10 @@
 #include <stdio.h> // for  sprintf;
-#include <stdlib.h> // for rand();
+#include <stdlib.h> // for rand(), exit()
 #include <time.h>
 
 #include "handle_data.h"
 
+// Array containing possible number of lines that will be generated for a file
 const int file_size[4] = {5, 10, 15, 20};
 
 void createDataFile(const char * dataFileName)
@@ -12,6 +13,7 @@ void createDataFile(const char * dataFileName)
     if (fPointer == NULL)
     {
         printf("Error creating the file: %s\n", dataFileName);
+        exit(1);
     }
 
     // initialize random seed
@@ -25,7 +27,8 @@ void createDataFile(const char * dataFileName)
 
     for(; i < num_lines_to_generate; i++)
     {
-        sprintf(currentLine, "%02i, %c%c, %i", i, generateLetter(), generateLetter(), generateNumber()); // sprintf add the null char at the end
+        // Create each line of text. Note: sprintf adds the null char at the end
+        sprintf(currentLine, "%02i, %c%c, %i", i, generateLetter(), generateLetter(), generateNumber());
         fprintf(fPointer, "%s\n", currentLine);
         //puts(currentLine);
     }
@@ -41,14 +44,17 @@ void readDataFile(const char* dataFileName)
     if (fPointer == NULL)
     {
         printf("Error reading  the file: %s\n", dataFileName);
+        exit(2);
     }
 
     int line_count = -1;
-    line_count = getNumberOfLinesInFile(dataFileName);
+    line_count = getNumberOfLinesInFile( dataFileName );
 
     struct SEntity* pListEntity;
     int index = 0;
-    
+
+
+    // Create a SEntity structure for each line in the file
     if (line_count > 0)
     {
         // Pointer to an array of struct SEntities
@@ -58,7 +64,7 @@ void readDataFile(const char* dataFileName)
         char singleLine[150] = {0};
         while( !feof(fPointer) )
         {
-            fgets(singleLine, 150, fPointer); // fgets adds '\0' add the end
+            fgets(singleLine, 150, fPointer); // fgets adds '\0' at the end
             sscanf(singleLine, "%2s, %2s, %i\n", pListEntity[index].id, pListEntity[index].state, &(pListEntity[index].number));
             printSEntity(pListEntity[index]);
             //printf("%s", singleLine);
